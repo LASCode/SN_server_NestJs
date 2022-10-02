@@ -13,17 +13,7 @@ export class TokenExceptionFilter implements ExceptionFilter {
   catch(exception: HttpException, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
-    const status = exception.getStatus();
-
     if (this.options?.clearAccessCookie) response.clearCookie(EnvConstants.JWT_ACCESS_COOKIE);
     if (this.options?.clearRefreshCookie) response.clearCookie(EnvConstants.JWT_REFRESH_COOKIE);
-    response
-      .status(status)
-      .json({
-        success: false,
-        status: status,
-        data: null,
-        error: exception.getResponse(),
-      });
   }
 }

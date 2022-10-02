@@ -1,22 +1,20 @@
-import { Document, Types } from 'mongoose';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Document, Types } from 'mongoose';
+import { Profile } from '../../profile/schema/profile.schema';
+import { Role } from '../../role/schema/role.schema';
 
-@Schema()
+@Schema({timestamps: true})
 export class User {
-  @Prop({ required: true, default: Types.ObjectId })
-  _customId: string;
-
-  @Prop({ required: false, default: null })
-  _tokenHash: string | null;
-
-  @Prop({ required: true })
-  _passwordHash: string;
-
-  @Prop({ required: true })
-  username: string;
-
-  @Prop({ required: true, unique: true })
+  @Prop({required: true, unique: true})
   login: string;
+  @Prop({required: false, default: null})
+  tokenHash: string | null;
+  @Prop({required: true})
+  passwordHash: string;
+  @Prop({required: false, type: Types.ObjectId, ref: 'Profile', default: null})
+  profile: Profile | null;
+  @Prop({required: true, type: [{type: Types.ObjectId, ref: 'Role'}]})
+  roles: Role[];
 }
 
 export type UserDocument = User & Document;

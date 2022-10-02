@@ -1,5 +1,6 @@
+import { Types } from 'mongoose';
+
 export class CreateUserDto {
   login: string;
-  username: string;
-  password: string;
+  passwordHash: string;
 }
