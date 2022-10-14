@@ -12,25 +12,18 @@ export class JwtAccessStrategy extends PassportStrategy(Strategy,'jwt-access') {
     private readonly userService: UserService,
   ) {
     super({
-      jwtFromRequest: ExtractJwt.fromExtractors([
-        JwtAccessStrategy.extractJWT,
-      ]),
+      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
       secretOrKey: EnvConstants.JWT_ACCESS_SECRET,
       passReqToCallback: true,
     });
   }
-  private static extractJWT(req: Request): string | null {
-    if (req.cookies && req.cookies[EnvConstants.JWT_ACCESS_COOKIE]) {
-      return req.cookies[EnvConstants.JWT_ACCESS_COOKIE]
-    }
-    return null;
-  }
+
   async validate(req: Request, payload: JWTPayload, done: VerifiedCallback) {
-    const refreshToken = req.cookies[EnvConstants.JWT_ACCESS_COOKIE].trim();
+    const token = req.headers.authorization.split(' ')[1];
     const user = await this.userService.findById(payload.id);
-    if (!refreshToken) done('Ошибка access аутентификации - невалидный токен', null);
+    if (!token) done('Ошибка access аутентификации - невалидный токен', null);
     if (!user) done('Ошибка access аутентификации - пользователь не существует', null);
-    done(null, {user, token: refreshToken, roles: payload.roles});
+    done(null, {user, token: token, roles: payload.roles});
   }
 }

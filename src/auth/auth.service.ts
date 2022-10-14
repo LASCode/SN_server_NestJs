@@ -22,7 +22,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async registration(userData: RegistrationDto): Promise<IAuthTokens> {
+  async registration(userData: RegistrationDto): Promise<IAuthTokens>   {
     const session = await this.userService.startSession();
     const result = await withTransaction<IAuthTokens>(session, async () => {
       const candidate: UserDocument = await this.userService.findOne({login: userData.login});
